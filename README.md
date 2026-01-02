@@ -9,9 +9,12 @@
 [![MediaPipe](https://img.shields.io/badge/MediaPipe-Hands-00ff88?style=flat-square)](https://google.github.io/mediapipe/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
+
+![Neon Slice Preview](assets/gameplay_preview.png)
+
 **A gesture-controlled slicing game with stunning 3D visuals**
 
-[🎮 Play Now](#-quick-start) • [✨ Features](#-features) • [🎯 How to Play](#-how-to-play) • [⚙️ Settings](#️-settings)
+[🎮 Play Now](https://ram6023.github.io/Neon-slice/) • [✨ Features](#-features) • [🎯 How to Play](#-how-to-play) • [⚙️ Settings](#️-settings)
 
 ---
 
