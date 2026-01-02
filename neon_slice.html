@@ -888,8 +888,8 @@
             class="settings-opt" data-sound="off">OFF</span></div>
       </div>
       <div class="settings-row"><span class="settings-label">Two-Hand Mode</span>
-        <div class="settings-value"><span class="settings-opt" data-hands="1">1 Hand</span><span
-            class="settings-opt active" data-hands="2">2 Hands</span></div>
+        <div class="settings-value"><span class="settings-opt active" data-hands="1">1 Hand</span><span
+            class="settings-opt" data-hands="2">2 Hands</span></div>
       </div>
       <div class="settings-row"><span class="settings-label">Theme</span>
         <div class="settings-value" id="theme-btns"></div>
@@ -1121,7 +1121,7 @@
     function getXPForLevel(l) { return l * 100 }
 
     // Game State
-    let gameMode = 'endless', handMode = 2, gameState = 'menu', score = 0, combo = 0, bestCombo = 0, lives = 3, level = 1, shapesSliced = 0, gameTime = 0, timeLimit = 60;
+    let gameMode = 'endless', handMode = 1, gameState = 'menu', score = 0, combo = 0, bestCombo = 0, lives = 3, level = 1, shapesSliced = 0, gameTime = 0, timeLimit = 60;
     let shapes = [], particles = [], portals = [], hands2 = [{ x: 0, y: 0, detected: false }, { x: 0, y: 0, detected: false }];
     // Optimized slice trail - pre-allocated ring buffer for smooth performance
     const TRAIL_MAX = 12;
