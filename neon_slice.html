@@ -992,21 +992,123 @@
     ctx.imageSmoothingEnabled = false;
     function resize() { canvas.width = innerWidth; canvas.height = innerHeight } resize(); addEventListener('resize', resize);
 
-    // Themes
+    // Themes - Rich gradient designs with unique visual identities
     const themes = [
-      { name: 'Neon', bg: ['#0a0020', '#1a0040', '#0a0020'], cursor: '#00ff88', accent: '#00ff88' },
-      { name: 'Retro', bg: ['#1a0a1a', '#2d1a2d', '#1a0a1a'], cursor: '#ff00ff', accent: '#ff00ff' },
-      { name: 'Ocean', bg: ['#001a2e', '#003355', '#001a2e'], cursor: '#00ccff', accent: '#00ccff' },
-      { name: 'Fire', bg: ['#1a0a00', '#3d1a00', '#1a0a00'], cursor: '#ff6600', accent: '#ff6600' },
-      { name: 'Forest', bg: ['#051a1a', '#103323', '#03140b'], cursor: '#ccff00', accent: '#39ff14' }
+      {
+        name: 'Neon Cosmos',
+        bg: ['#0d001a', '#1a0033', '#2d0052', '#1a0033', '#0d001a'],
+        cursor: '#00ff88',
+        accent: 'linear-gradient(135deg, #00ff88, #00ccff, #a855f7)',
+        pattern: 'cosmic'
+      },
+      {
+        name: 'Synthwave',
+        bg: ['#0f0018', '#2a0845', '#5c1a5c', '#ff6b9d', '#ffb366'],
+        cursor: '#ff00ff',
+        accent: 'linear-gradient(135deg, #ff00ff, #ff6b9d, #ffb366)',
+        pattern: 'grid'
+      },
+      {
+        name: 'Deep Ocean',
+        bg: ['#000814', '#001d3d', '#003566', '#005599', '#003566', '#001d3d'],
+        cursor: '#00f5ff',
+        accent: 'linear-gradient(135deg, #00f5ff, #00d4aa, #0077b6)',
+        pattern: 'waves'
+      },
+      {
+        name: 'Inferno',
+        bg: ['#0d0000', '#2d0a00', '#5c1a00', '#8b2500', '#cc3300', '#8b2500'],
+        cursor: '#ff6600',
+        accent: 'linear-gradient(135deg, #ff6600, #ff3300, #ffcc00)',
+        pattern: 'embers'
+      },
+      {
+        name: 'Enchanted Forest',
+        bg: ['#001a0d', '#002a15', '#004d29', '#007a42', '#004d29', '#001a0d'],
+        cursor: '#7fff00',
+        accent: 'linear-gradient(135deg, #7fff00, #00ff88, #00e5cc)',
+        pattern: 'fireflies'
+      }
     ];
-    let currentTheme = 4;
+    let currentTheme = 0;
 
     // Audio
     const AudioCtx = window.AudioContext || window.webkitAudioContext; let audioCtx, soundOn = true;
     function initAudio() { if (!audioCtx) audioCtx = new AudioCtx() }
     function playTone(f, t, d, v = 0.3) { if (!audioCtx || !soundOn) return; const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination); o.type = t; o.frequency.value = f; g.gain.setValueAtTime(v, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d); o.start(); o.stop(audioCtx.currentTime + d) }
-    function sfxSlice() { playTone(800, 'sine', 0.08, 0.2); playTone(1200, 'sine', 0.06, 0.15) }
+    // Fruit Ninja style cutting sound - juicy splat with sharp blade attack
+    function sfxSlice() {
+      if (!audioCtx || !soundOn) return;
+      const now = audioCtx.currentTime;
+
+      // === Layer 1: Sharp blade "thwip" attack ===
+      const blade = audioCtx.createOscillator();
+      const bladeGain = audioCtx.createGain();
+      blade.type = 'sawtooth';
+      blade.frequency.setValueAtTime(1200, now);
+      blade.frequency.exponentialRampToValueAtTime(200, now + 0.06);
+      bladeGain.gain.setValueAtTime(0.25, now);
+      bladeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      blade.connect(bladeGain);
+      bladeGain.connect(audioCtx.destination);
+      blade.start(now);
+      blade.stop(now + 0.1);
+
+      // === Layer 2: Juicy "splat" noise (the fruit bursting) ===
+      const splatDuration = 0.12;
+      const bufferSize = audioCtx.sampleRate * splatDuration;
+      const splatBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const splatData = splatBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        splatData[i] = Math.random() * 2 - 1;
+      }
+
+      const splat = audioCtx.createBufferSource();
+      splat.buffer = splatBuffer;
+
+      // Lowpass filter for wet, squelchy character
+      const splatFilter = audioCtx.createBiquadFilter();
+      splatFilter.type = 'lowpass';
+      splatFilter.frequency.setValueAtTime(2500, now);
+      splatFilter.frequency.exponentialRampToValueAtTime(400, now + splatDuration);
+      splatFilter.Q.value = 3; // Resonance for juicy sound
+
+      const splatGain = audioCtx.createGain();
+      splatGain.gain.setValueAtTime(0.4, now);
+      splatGain.gain.exponentialRampToValueAtTime(0.001, now + splatDuration);
+
+      splat.connect(splatFilter);
+      splatFilter.connect(splatGain);
+      splatGain.connect(audioCtx.destination);
+      splat.start(now);
+      splat.stop(now + splatDuration);
+
+      // === Layer 3: Low thump (impact body) ===
+      const thump = audioCtx.createOscillator();
+      const thumpGain = audioCtx.createGain();
+      thump.type = 'sine';
+      thump.frequency.setValueAtTime(150, now);
+      thump.frequency.exponentialRampToValueAtTime(60, now + 0.08);
+      thumpGain.gain.setValueAtTime(0.3, now);
+      thumpGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      thump.connect(thumpGain);
+      thumpGain.connect(audioCtx.destination);
+      thump.start(now);
+      thump.stop(now + 0.12);
+
+      // === Layer 4: High frequency "juice splash" ===
+      const splash = audioCtx.createOscillator();
+      const splashGain = audioCtx.createGain();
+      splash.type = 'sine';
+      splash.frequency.setValueAtTime(3000, now + 0.01);
+      splash.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+      splashGain.gain.setValueAtTime(0.08, now + 0.01);
+      splashGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+      splash.connect(splashGain);
+      splashGain.connect(audioCtx.destination);
+      splash.start(now + 0.01);
+      splash.stop(now + 0.08);
+    }
     function sfxBomb() { playTone(80, 'sawtooth', 0.4, 0.4) }
     function sfxPowerUp() { playTone(600, 'sine', 0.1); setTimeout(() => playTone(1000, 'sine', 0.12), 80) }
     function sfxLevelUp() { [400, 500, 650, 800].forEach((f, i) => setTimeout(() => playTone(f, 'sine', 0.12, 0.25), i * 70)) }
@@ -1019,7 +1121,7 @@
     function getXPForLevel(l) { return l * 100 }
 
     // Game State
-    let gameMode = 'endless', gameState = 'menu', score = 0, combo = 0, bestCombo = 0, lives = 3, level = 1, shapesSliced = 0, gameTime = 0, timeLimit = 60;
+    let gameMode = 'endless', handMode = 2, gameState = 'menu', score = 0, combo = 0, bestCombo = 0, lives = 3, level = 1, shapesSliced = 0, gameTime = 0, timeLimit = 60;
     let shapes = [], particles = [], portals = [], hands2 = [{ x: 0, y: 0, detected: false }, { x: 0, y: 0, detected: false }];
     // Optimized slice trail - pre-allocated ring buffer for smooth performance
     const TRAIL_MAX = 12;
@@ -1064,11 +1166,23 @@
     document.getElementById('quit-btn').onclick = showMenu;
     document.querySelectorAll('[data-time]').forEach(b => b.onclick = () => { document.querySelectorAll('[data-time]').forEach(x => x.classList.remove('active')); b.classList.add('active'); timeLimit = parseInt(b.dataset.time) });
     document.querySelectorAll('[data-sound]').forEach(b => b.onclick = () => { document.querySelectorAll('[data-sound]').forEach(x => x.classList.remove('active')); b.classList.add('active'); soundOn = b.dataset.sound === 'on' });
-    document.querySelectorAll('[data-hands]').forEach(b => b.onclick = () => { document.querySelectorAll('[data-hands]').forEach(x => x.classList.remove('active')); b.classList.add('active'); });
+    document.querySelectorAll('[data-hands]').forEach(b => b.onclick = () => { document.querySelectorAll('[data-hands]').forEach(x => x.classList.remove('active')); b.classList.add('active'); handMode = parseInt(b.dataset.hands); });
 
-    // Theme buttons
+    // Theme buttons - with gradient preview
     const themeCont = document.getElementById('theme-btns');
-    themes.forEach((t, i) => { const btn = document.createElement('div'); btn.className = 'theme-btn' + (i === 0 ? ' active' : ''); btn.style.background = t.accent; btn.onclick = () => { document.querySelectorAll('.theme-btn').forEach(x => x.classList.remove('active')); btn.classList.add('active'); currentTheme = i }; themeCont.appendChild(btn) });
+    themes.forEach((t, i) => {
+      const btn = document.createElement('div');
+      btn.className = 'theme-btn' + (i === currentTheme ? ' active' : '');
+      btn.style.background = t.accent;
+      btn.title = t.name;
+      btn.onclick = () => {
+        document.querySelectorAll('.theme-btn').forEach(x => x.classList.remove('active'));
+        btn.classList.add('active');
+        currentTheme = i;
+        bgGrad = null; // Reset gradient cache
+      };
+      themeCont.appendChild(btn);
+    });
 
     // Update menu stats
     function updateMenuStats() { document.getElementById('menu-high').textContent = savedData.highScore; document.getElementById('menu-sliced').textContent = savedData.totalSliced; document.getElementById('player-lvl').textContent = savedData.playerLevel; const xpNeeded = getXPForLevel(savedData.playerLevel); const xpProgress = (savedData.playerXP % xpNeeded) / xpNeeded * 100; document.getElementById('xp-fill').style.width = xpProgress + '%' }
@@ -1495,27 +1609,100 @@
       requestAnimationFrame(loop);
       const dt = lastTime ? ts - lastTime : 16; lastTime = ts;
 
-      // Background (cached)
+      // Background (cached) - Dynamic multi-stop gradients
       const theme = themes[currentTheme];
-      if (!bgGrad || bgGrad.theme !== currentTheme) {
+      if (!bgGrad || bgGrad.theme !== currentTheme || bgGrad.h !== canvas.height) {
         bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, theme.bg[0]); bgGrad.addColorStop(0.5, theme.bg[1]); bgGrad.addColorStop(1, theme.bg[2]);
+        const colors = theme.bg;
+        colors.forEach((color, i) => {
+          bgGrad.addColorStop(i / (colors.length - 1), color);
+        });
         bgGrad.theme = currentTheme;
+        bgGrad.h = canvas.height;
       }
       ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Forest Theme: Ambient Fireflies
-      if (theme.name === 'Forest' && !paused && gameState === 'playing') {
-        if (Math.random() < 0.05) {
+      // Theme-specific background patterns
+      if (!paused && gameState === 'playing') {
+        // Neon Cosmos: Twinkling stars
+        if (theme.pattern === 'cosmic') {
+          ctx.save();
+          for (let i = 0; i < 3; i++) {
+            const sx = ((ts * 0.01 + i * 500) % canvas.width);
+            const sy = ((i * 200 + Math.sin(ts * 0.002 + i) * 50) % canvas.height);
+            const starSize = 1 + Math.sin(ts * 0.005 + i * 2) * 0.5;
+            ctx.globalAlpha = 0.4 + Math.sin(ts * 0.003 + i) * 0.3;
+            ctx.fillStyle = i % 2 === 0 ? '#a855f7' : '#00ccff';
+            ctx.beginPath(); ctx.arc(sx, sy, starSize, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.restore();
+        }
+
+        // Synthwave: Retro grid horizon
+        if (theme.pattern === 'grid') {
+          ctx.save();
+          ctx.strokeStyle = 'rgba(255, 107, 157, 0.15)';
+          ctx.lineWidth = 1;
+          const gridOffset = (ts * 0.05) % 50;
+          for (let y = canvas.height * 0.6; y < canvas.height; y += 50) {
+            ctx.beginPath();
+            ctx.moveTo(0, y + gridOffset);
+            ctx.lineTo(canvas.width, y + gridOffset);
+            ctx.stroke();
+          }
+          for (let x = 0; x < canvas.width; x += 80) {
+            ctx.beginPath();
+            ctx.moveTo(x, canvas.height * 0.6);
+            ctx.lineTo(x + (x - canvas.width / 2) * 0.3, canvas.height);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+
+        // Deep Ocean: Gentle wave overlay
+        if (theme.pattern === 'waves') {
+          ctx.save();
+          ctx.globalAlpha = 0.1;
+          ctx.fillStyle = '#00f5ff';
+          for (let w = 0; w < 3; w++) {
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+            for (let x = 0; x <= canvas.width; x += 20) {
+              const y = canvas.height - 100 - w * 60 + Math.sin(x * 0.01 + ts * 0.001 + w) * 20;
+              ctx.lineTo(x, y);
+            }
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.closePath();
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+
+        // Inferno: Rising embers
+        if (theme.pattern === 'embers' && Math.random() < 0.08) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: canvas.height + 10,
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: -(Math.random() * 3 + 2),
+            size: Math.random() * 4 + 2,
+            color: Math.random() > 0.5 ? '#ff6600' : '#ffcc00',
+            life: 1,
+            decay: 0.008
+          });
+        }
+
+        // Enchanted Forest: Magical fireflies
+        if (theme.pattern === 'fireflies' && Math.random() < 0.06) {
           particles.push({
             x: Math.random() * canvas.width,
             y: canvas.height + 10,
             vx: (Math.random() - 0.5) * 2,
             vy: -(Math.random() * 2 + 1),
             size: Math.random() * 3 + 1,
-            color: '#ccff00',
-            life: 1, // Longer life
-            decay: 0.005 // Slow decay
+            color: Math.random() > 0.5 ? '#7fff00' : '#00ff88',
+            life: 1,
+            decay: 0.005
           });
         }
       }
@@ -1630,8 +1817,16 @@
       gestFist = false; gestPeace = false;
 
       if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
-        res.multiHandLandmarks.forEach((lm, i) => {
-          if (i > 1) return;
+        // In single hand mode, only process first hand; in two hand mode, process both
+        const maxHands = handMode;
+
+        // First, reset hands that won't be tracked
+        for (let h = maxHands; h < 2; h++) {
+          hands2[h].detected = false;
+        }
+
+        res.multiHandLandmarks.slice(0, maxHands).forEach((lm, i) => {
+          if (i >= maxHands) return;
 
           // Use index finger tip (landmark 8) for precise control
           const tip = lm[8];
@@ -1670,7 +1865,8 @@
         });
 
         dot.classList.add('active');
-        txt.textContent = res.multiHandLandmarks.length + ' hand(s)';
+        const trackedHands = Math.min(res.multiHandLandmarks.length, handMode);
+        txt.textContent = trackedHands + ' hand(s)' + (handMode === 1 ? ' [1H mode]' : '');
         gestF.classList.toggle('active', gestFist);
         gestP.classList.toggle('active', gestPeace);
       } else {

@@ -221,6 +221,15 @@ Cool blue depths
 Blazing orange
 
 </td>
+<td align="center">
+
+**🌲 Forest**
+```
+#ccff00
+```
+Bio-Lumi Wild
+
+</td>
 </tr>
 </table>
 
