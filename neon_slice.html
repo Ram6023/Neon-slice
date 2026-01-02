@@ -997,9 +997,10 @@
       { name: 'Neon', bg: ['#0a0020', '#1a0040', '#0a0020'], cursor: '#00ff88', accent: '#00ff88' },
       { name: 'Retro', bg: ['#1a0a1a', '#2d1a2d', '#1a0a1a'], cursor: '#ff00ff', accent: '#ff00ff' },
       { name: 'Ocean', bg: ['#001a2e', '#003355', '#001a2e'], cursor: '#00ccff', accent: '#00ccff' },
-      { name: 'Fire', bg: ['#1a0a00', '#3d1a00', '#1a0a00'], cursor: '#ff6600', accent: '#ff6600' }
+      { name: 'Fire', bg: ['#1a0a00', '#3d1a00', '#1a0a00'], cursor: '#ff6600', accent: '#ff6600' },
+      { name: 'Forest', bg: ['#051a1a', '#103323', '#03140b'], cursor: '#ccff00', accent: '#39ff14' }
     ];
-    let currentTheme = 0;
+    let currentTheme = 4;
 
     // Audio
     const AudioCtx = window.AudioContext || window.webkitAudioContext; let audioCtx, soundOn = true;
@@ -1035,7 +1036,8 @@
       { type: 'orb', color: '#00ffcc', colorLight: '#99ffee', colorDark: '#006655', glow: 'rgba(0,255,204,0.6)', pts: 10 },
       { type: 'cube', color: '#7c3aed', colorLight: '#a78bfa', colorDark: '#4c1d95', glow: 'rgba(124,58,237,0.6)', pts: 10 },
       { type: 'core', color: '#f59e0b', colorLight: '#fcd34d', colorDark: '#b45309', glow: 'rgba(245,158,11,0.6)', pts: 10 },
-      { type: 'ring', color: '#ec4899', colorLight: '#f9a8d4', colorDark: '#9d174d', glow: 'rgba(236,72,153,0.6)', pts: 10 }
+      { type: 'ring', color: '#ec4899', colorLight: '#f9a8d4', colorDark: '#9d174d', glow: 'rgba(236,72,153,0.6)', pts: 10 },
+      { type: 'pyramid', color: '#00ff88', colorLight: '#ccff00', colorDark: '#008844', glow: 'rgba(0,255,136,0.6)', pts: 15 }
     ];
 
     // UI Setup
@@ -1396,6 +1398,36 @@
         ctx.arc(0, 0, half * 0.52, -0.5, 1.2);
         ctx.stroke();
       }
+      // Pyramid - New 3D Shape
+      else if (s.type === 'pyramid') {
+        const light = s.colorLight, dark = s.colorDark;
+        ctx.lineJoin = 'round';
+        // Face 1 (Left shade)
+        ctx.fillStyle = s.color;
+        ctx.beginPath();
+        ctx.moveTo(0, -half * 1.2);
+        ctx.lineTo(-half, half * 0.8);
+        ctx.lineTo(0, half);
+        ctx.closePath();
+        ctx.fill();
+        // Face 2 (Right light)
+        ctx.fillStyle = light;
+        ctx.beginPath();
+        ctx.moveTo(0, -half * 1.2);
+        ctx.lineTo(half, half * 0.8);
+        ctx.lineTo(0, half);
+        ctx.closePath();
+        ctx.fill();
+        // Face 3 (Bottom dark - partial)
+        ctx.fillStyle = dark;
+        ctx.beginPath();
+        ctx.moveTo(-half, half * 0.8);
+        ctx.lineTo(0, half);
+        ctx.lineTo(half, half * 0.8);
+        ctx.lineTo(0, half * 0.5); // recessed bottom center
+        ctx.closePath();
+        ctx.fill();
+      }
       ctx.restore();
     }
 
@@ -1471,6 +1503,22 @@
         bgGrad.theme = currentTheme;
       }
       ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Forest Theme: Ambient Fireflies
+      if (theme.name === 'Forest' && !paused && gameState === 'playing') {
+        if (Math.random() < 0.05) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: canvas.height + 10,
+            vx: (Math.random() - 0.5) * 2,
+            vy: -(Math.random() * 2 + 1),
+            size: Math.random() * 3 + 1,
+            color: '#ccff00',
+            life: 1, // Longer life
+            decay: 0.005 // Slow decay
+          });
+        }
+      }
 
       if (gameState !== 'playing') { drawCursor(); return }
       if (paused) { drawCursor(); return }
