@@ -14,7 +14,7 @@
 
 **A gesture-controlled slicing game with stunning 3D visuals**
 
-[🎮 Play Now](https://ram6023.github.io/Neon-slice/) • [✨ Features](#-features) • [🎯 How to Play](#-how-to-play) • [⚙️ Settings](#️-settings)
+[![Play Now](https://img.shields.io/badge/🎮_Play_Now-00ff88?style=for-the-badge&labelColor=black)](https://ram6023.github.io/Neon-slice/) [![Features](https://img.shields.io/badge/✨_Features-ff00ff?style=for-the-badge&labelColor=black)](#-features) [![How to Play](https://img.shields.io/badge/🎯_How_to_Play-00ccff?style=for-the-badge&labelColor=black)](#-how-to-play) [![Settings](https://img.shields.io/badge/⚙️_Settings-ff6600?style=for-the-badge&labelColor=black)](#-settings)
 
 ---
 
