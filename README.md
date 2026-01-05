@@ -1,4 +1,4 @@
-# 🎮 NEON SLICE Ultimate
+# 🎮 NEON SLICE ULTIMATE
 
 <div align="center">
 
